@@ -1,21 +1,33 @@
 
 import { useEffect } from 'react';
-import { StyleSheet, StatusBar, View, FlatList } from 'react-native';
+import { StyleSheet, StatusBar, View, FlatList, RefreshControl } from 'react-native';
 import ListItem from '../components/ListItem';
-import { setAlbums, setLoading } from '../redux/actions/Actions';
+import { setAlbums, setLoading, setRefreshing } from '../redux/actions/Actions';
 import { useSelector } from 'react-redux';
 import ProgressCircleSnail from 'react-native-progress/CircleSnail';
 
 export default function Albums({ navigation }) {
-    const albums = useSelector(state => state.albums);
+    const { albums, loading, refreshing } = useSelector(state => state);
     const isLoading = useSelector(state => state.loading);
+    const isRefreshing = useSelector(state => state.refreshing);
 
     useEffect(() => {
-      getAlbums();
+      onAppLoad();
     }, []);
 
-    const getAlbums = async () => {
+    const onAppLoad = async () => {
       setLoading(true);
+      await getAlbums();
+      setLoading(false);
+    };
+
+    const onRefresh = async () => {
+      setRefreshing(true);
+      await getAlbums();
+      setRefreshing(false);
+    }
+
+    const getAlbums = async () => {
       try {
         const response = await fetch('https://jsonplaceholder.typicode.com/albums');
         const json = await response.json();
@@ -46,8 +58,6 @@ export default function Albums({ navigation }) {
         setAlbums(json);
       } catch (error) {
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -55,16 +65,24 @@ export default function Albums({ navigation }) {
         <View style={styles.container}>
           <StatusBar />
           {
-              isLoading
+              loading
               ? <ProgressCircleSnail color={'#2196f3'} indeterminate={true}/>
-              :  <FlatList
-                style={{flex: 1}}
-                data={ albums }
-                keyExtractor={({ id }, index) => id}
-                renderItem={({ item }) => (<ListItem navigation={navigation} item={item}/>)}
-                ItemSeparatorComponent={() => (
-                  <View style={styles.divider}/>
-                )}
+              : <FlatList
+                  style={{flex: 1}}
+                  data={ albums }
+                  keyExtractor={({ id }, index) => id}
+                  renderItem={({ item }) => (<ListItem navigation={navigation} item={item}/>)}
+                  ItemSeparatorComponent={() => (
+                    <View style={styles.divider}/>
+                  )}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={ refreshing }
+                      onRefresh={ onRefresh }
+                      colors={['#2196f3']}
+                      tintColor={'#2196f3'}
+                    />
+                  }
               />
           }
         </View>
@@ -82,5 +100,5 @@ const styles = StyleSheet.create({
       backgroundColor: '#2196f3',
       height: 1,
       marginHorizontal: 16,
-    }
+    },
 });

@@ -6,6 +6,7 @@ const initialState = {
     selectedPhoto: null,
     sortBy: 'asc',
     loading: false,
+    refreshing: false,
 };
 
 const Reducer = (state = initialState, { type, payload }) => {
@@ -36,6 +37,9 @@ const Reducer = (state = initialState, { type, payload }) => {
         case Actions.SET_LOADING:
             console.log("SET_LOADING");
             return {...state, loading: payload.loading};
+        case Actions.SET_REFRESHING:
+            console.log("SET_REFRESHING");
+            return {...state, refreshing: payload.refreshing};
         default:
             return state;
     }

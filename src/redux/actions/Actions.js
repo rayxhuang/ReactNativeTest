@@ -45,3 +45,12 @@ export function setLoading(loading) {
         }
     });
 }
+
+export function setRefreshing(refreshing) {
+    store.dispatch({
+        type: ActionTypes.SET_REFRESHING,
+        payload: {
+            refreshing: refreshing,
+        }
+    });
+}

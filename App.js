@@ -1,20 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import store from './src/redux/Store';
+import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Albums from './src/screens/Albums';
+import Photos from './src/screens/Photos';
+import SortIcon from './src/components/SortIcon';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={ store }>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="Albums"
+            component={ Albums }
+            options={{
+              headerStyle: {
+                backgroundColor: '#2196f3',
+              },
+              headerTitleStyle: {
+                color: 'white',
+              },
+              headerRight: (props) => <SortIcon {...props} />,
+            }}
+          />
+          <Stack.Screen 
+            name="Photos"
+            component={ Photos }
+            options={({ route }) => ({ 
+              title: route.params.title,
+              headerStyle: {
+                backgroundColor: '#2196f3',
+              },
+              headerTitleStyle: {
+                color: 'white',
+              },
+              headerTintColor: 'white'
+             })}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

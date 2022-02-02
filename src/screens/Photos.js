@@ -1,18 +1,30 @@
 import { StyleSheet, Dimensions, View, FlatList, Image, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { setSelectedPhoto } from '../redux/actions/Actions';
+import PagerView from 'react-native-pager-view';
 
 export default function Photos() {
     const photos = useSelector(state => state.selectedAlbum.photos);
     const photoSelected = useSelector(state => state.selectedPhoto);
 
-    function onThumbnailPressHandler(photo) {
+    const onThumbnailPressHandler = (photo) => {
         setSelectedPhoto(photo);
     }
 
-    function onFullImagePressHandler() {
+    const onFullImagePressHandler = () => {
         setSelectedPhoto(null);
     }
+
+    const findSelectedPhotoIndex = () => {
+        const index = photos.indexOf(photoSelected);
+        return index ?? 0;
+    }
+
+    // const onPagerViewSwipeHandler = (e) => {
+    //     const newIndex = e.nativeEvent.position;
+    //     const newSelectedPhoto = photos[newIndex];
+    //     onThumbnailPressHandler(newSelectedPhoto);
+    // }
 
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
@@ -33,40 +45,36 @@ export default function Photos() {
                 <FlatList
                     data={rows}
                     keyExtractor={(_, index) => index}
-                    renderItem={({ item }) => {
-                        return (
-                            <View style={{height: size}}>
+                    renderItem={({ item }) => (
+                        <View style={{height: size}}>
                             <FlatList 
                                 horizontal
                                 data={item}
                                 keyExtractor={(photo, index) => photo.id}
-                                renderItem={({ item }) => {
-                                    return (
-                                        <Pressable onPress={ () => onThumbnailPressHandler(item) }>
-                                            <Image 
-                                                style={{
-                                                    width: size,
-                                                    height: size,
-                                                    resizeMode: 'stretch',
-                                                }}
-                                                source={{
-                                                    uri: 'https://reactnative.dev/img/tiny_logo.png',
-                                                    // url: item.thumbnailUrl + '.png',
-                                                }}
-                                            />
-                                        </Pressable>
-                                    );
-                                }}
+                                renderItem={({ item }) => (
+                                    <Pressable onPress={ () => onThumbnailPressHandler(item) }>
+                                        <Image 
+                                            style={{
+                                                width: size,
+                                                height: size,
+                                                resizeMode: 'stretch',
+                                            }}
+                                            source={{
+                                                uri: 'https://reactnative.dev/img/tiny_logo.png',
+                                                // url: item.thumbnailUrl + '.png',
+                                            }}
+                                        />
+                                    </Pressable>
+                                )}
                             />
-                            </View>
-                        );
-                    }}
+                        </View>
+                    )}
                 />
             </View>
         );
     } else {
-        return (
-            <View style={styles.container}>
+        const pages = photos.map(photo => (
+            <View style={{flex: 1}} key={photo.id}>
                 <Pressable onPress={onFullImagePressHandler}>
                     <Image 
                         style={{
@@ -79,6 +87,18 @@ export default function Photos() {
                         }}
                     />
                 </Pressable>
+            </View>
+        ));
+
+        return (
+            <View style={{flex: 1}}>
+                <PagerView 
+                    style={{flex: 1}} 
+                    initialPage={ findSelectedPhotoIndex() }
+                    // onPageSelected={ onPagerViewSwipeHandler }
+                >
+                    { pages }
+                </PagerView>
             </View>
         );
     }

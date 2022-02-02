@@ -8,8 +8,6 @@ import ProgressCircleSnail from 'react-native-progress/CircleSnail';
 
 export default function Albums({ navigation }) {
     const { albums, loading, refreshing } = useSelector(state => state);
-    const isLoading = useSelector(state => state.loading);
-    const isRefreshing = useSelector(state => state.refreshing);
 
     useEffect(() => {
       onAppLoad();
@@ -68,13 +66,11 @@ export default function Albums({ navigation }) {
               loading
               ? <ProgressCircleSnail color={'#2196f3'} indeterminate={true}/>
               : <FlatList
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                   data={ albums }
                   keyExtractor={({ id }, index) => id}
                   renderItem={({ item }) => (<ListItem navigation={navigation} item={item}/>)}
-                  ItemSeparatorComponent={() => (
-                    <View style={styles.divider}/>
-                  )}
+                  ItemSeparatorComponent={() => <View style={styles.divider}/>}
                   refreshControl={
                     <RefreshControl
                       refreshing={ refreshing }

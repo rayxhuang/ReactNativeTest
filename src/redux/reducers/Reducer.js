@@ -7,6 +7,7 @@ const initialState = {
     sortBy: 'asc',
     loading: false,
     refreshing: false,
+    searchString: null,
 };
 
 const Reducer = (state = initialState, { type, payload }) => {
@@ -18,7 +19,7 @@ const Reducer = (state = initialState, { type, payload }) => {
             albums.sort((a, b) => {
                 return (isAsc ? 1 : -1) * (a.title < b.title ? -1 : 1)
             });
-            return {albums: albums, selectedAlbum: null, selectedPhoto: null, sortBy: state.sortBy, loading: false};
+            return {albums: albums, selectedAlbum: null, selectedPhoto: null, sortBy: state.sortBy, loading: false, searchString: null};
         case Actions.SET_SELECTED_ALBUM:
             console.log("SET_SELECTED_ALBUM");
             return {...state, selectedAlbum: payload.album, selectedPhoto: null};
@@ -40,6 +41,9 @@ const Reducer = (state = initialState, { type, payload }) => {
         case Actions.SET_REFRESHING:
             console.log("SET_REFRESHING");
             return {...state, refreshing: payload.refreshing};
+        case Actions.SET_SEARCH_STRING:
+            console.log("SET_SEARCH_STRING");
+            return {...state, searchString: payload.searchString};
         default:
             return state;
     }

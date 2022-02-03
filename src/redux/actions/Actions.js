@@ -54,3 +54,12 @@ export function setRefreshing(refreshing) {
         }
     });
 }
+
+export function setSearchString(string) {
+    store.dispatch({
+        type: ActionTypes.SET_SEARCH_STRING,
+        payload: {
+            searchString: string,
+        }
+    });
+}

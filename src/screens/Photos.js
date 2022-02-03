@@ -34,7 +34,7 @@ export default function Photos() {
     const size = windowWidth / maxThumbnailPerRow;
     
     let rows = [];
-    for(let i = 0; i < numberOfRows; i++) {
+    for (let i = 0; i < numberOfRows; i++) {
         const row = photos.slice(i * maxThumbnailPerRow, (i + 1) * maxThumbnailPerRow);
         rows.push(row);
     }

@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         width: '100%',
-        // backgroundColor: 'grey',
         padding: 10,
     },
     titleText: {

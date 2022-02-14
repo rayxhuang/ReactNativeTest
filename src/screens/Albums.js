@@ -1,10 +1,9 @@
 
-import { useEffect } from 'react';
-import { StyleSheet, StatusBar, View, FlatList, RefreshControl, TextInput, Dimensions } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { StyleSheet, StatusBar, View, Animated, RefreshControl, TextInput, Dimensions, ActivityIndicator } from 'react-native';
 import ListItem from '../components/ListItem';
 import { setAlbums, setLoading, setRefreshing, setSearchString } from '../redux/actions/Actions';
 import { useSelector } from 'react-redux';
-import ProgressCircleSnail from 'react-native-progress/CircleSnail';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function Albums({ navigation }) {
@@ -24,7 +23,7 @@ export default function Albums({ navigation }) {
       setRefreshing(true);
       await getAlbums();
       setRefreshing(false);
-    }
+    };
 
     const getAlbums = async () => {
       try {
@@ -62,7 +61,7 @@ export default function Albums({ navigation }) {
 
     const onChangeText = (text) => {
       setSearchString(text);
-    }
+    };
 
     const filteredAlbums = albums.filter(album => 
       searchString 
@@ -71,16 +70,19 @@ export default function Albums({ navigation }) {
       : true
     );
 
+    const scrollY = useRef(new Animated.Value(0)).current;
+
     return (
         <View style={styles.container}>
           <StatusBar />
           {
               loading
-              ? <ProgressCircleSnail color={'#2196f3'} indeterminate={true}/>
+              ? <ActivityIndicator color={'#2196f3'}/>
               : <View>
+                  {/* Search bar */}
                   <View style={{
-                    width: Dimensions.get('window').width - 32,
-                    marginHorizontal: 16,
+                    width: Dimensions.get('window').width - 60,
+                    marginHorizontal: 30,
                     marginVertical: 5,
                     paddingRight: 10,
                     borderWidth: 1,
@@ -96,12 +98,36 @@ export default function Albums({ navigation }) {
                     />
                     <FontAwesome name={'search'} size={20} color="black" />
                   </View>
-                  <FlatList
+                  {/* List of albums */}
+                  <Animated.FlatList
                     style={{ flex: 1 }}
+                    onScroll={
+                      Animated.event(
+                        [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                        {useNativeDriver: true},
+                      )
+                    }
                     data={ filteredAlbums }
-                    keyExtractor={({ id }, index) => id}
-                    renderItem={({ item }) => (<ListItem navigation={navigation} item={item}/>)}
-                    ItemSeparatorComponent={() => <View style={styles.divider}/>}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item, index }) => {
+                      const inputRange = [
+                        -1,
+                        0,
+                        index * 100,
+                        (index + 3.5) * 100,
+                      ]
+
+                      const scale = scrollY.interpolate({
+                        inputRange,
+                        outputRange: [1, 1, 1, 0],
+                      })
+
+                      return (
+                        <ListItem navigation={navigation} item={item} scale={scale}/>
+                      )
+                    }}
+                    contentContainerStyle={{paddingHorizontal: 20}}
+                    // ItemSeparatorComponent={() => <View style={styles.divider}/>}
                     refreshControl={
                       <RefreshControl
                         refreshing={ refreshing }

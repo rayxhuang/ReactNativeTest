@@ -8,6 +8,8 @@ const initialState = {
     loading: false,
     refreshing: false,
     searchString: null,
+    userAvatar: null,
+    userName: null,
 };
 
 const Reducer = (state = initialState, { type, payload }) => {
@@ -19,7 +21,16 @@ const Reducer = (state = initialState, { type, payload }) => {
             albums.sort((a, b) => {
                 return (isAsc ? 1 : -1) * (a.title < b.title ? -1 : 1)
             });
-            return {albums: albums, selectedAlbum: null, selectedPhoto: null, sortBy: state.sortBy, loading: false, searchString: null};
+            return {
+                albums: albums,
+                selectedAlbum: null,
+                selectedPhoto: null,
+                sortBy: state.sortBy, 
+                loading: false,
+                searchString: null,
+                userAvatar: state.userAvatar,
+                userName: state.userName,
+            };
         case Actions.SET_SELECTED_ALBUM:
             console.log("SET_SELECTED_ALBUM");
             return {...state, selectedAlbum: payload.album, selectedPhoto: null};
@@ -44,6 +55,12 @@ const Reducer = (state = initialState, { type, payload }) => {
         case Actions.SET_SEARCH_STRING:
             console.log("SET_SEARCH_STRING");
             return {...state, searchString: payload.searchString};
+        case Actions.SET_USER_AVATAR:
+            console.log("SET_USER_AVATAR");
+            return {...state, userAvatar: payload.userAvatar};
+        case Actions.SET_USER_NAME:
+            console.log("SET_USER_NAME");
+            return {...state, userName: payload.userName};
         default:
             return state;
     }

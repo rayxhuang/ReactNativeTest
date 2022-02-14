@@ -5,3 +5,5 @@ export const SET_SORT_BY = "SET_SORT_BY";
 export const SET_LOADING = "SET_LOADING";
 export const SET_REFRESHING = "SET_REFRESHING";
 export const SET_SEARCH_STRING = "SET_SEARCH_STRING";
+export const SET_USER_AVATAR = 'SET_USER_AVATAR';
+export const SET_USER_NAME = 'SET_USER_NAME';

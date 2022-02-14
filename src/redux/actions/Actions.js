@@ -63,3 +63,21 @@ export function setSearchString(string) {
         }
     });
 }
+
+export function setUserAvatar(uri) {
+    store.dispatch({
+        type: ActionTypes.SET_USER_AVATAR,
+        payload: {
+            userAvatar: uri,
+        }
+    });
+}
+
+export function setUserName(name) {
+    store.dispatch({
+        type: ActionTypes.SET_USER_NAME,
+        payload: {
+            userName: name,
+        }
+    });
+}
